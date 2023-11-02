@@ -1,0 +1,64 @@
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+  <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="max-w-xl flex flex-col mx-auto bg-slate-800 text-white">
+  <h1 class="font-bold text-2xl my-16">HTMX Todos</h1>
+
+  <form
+    class="flex gap-2"
+    hx-post="/todos"
+    hx-target="#todos"
+    hx-swap="innerHTML"
+    _="on htmx:afterRequest reset() me"
+  >
+    <input class="flex-1 bg-white border border-slate-400 text-black px-4 py-2 rounded" type="text" name="todo">
+
+    <button type="submit" class="bg-blue-400 text-white px-4 py-2 rounded">
+      Add
+    </button>
+  </form>
+
+  <div id="todos" class="py-8 px-4 flex flex-col gap-4">
+    {{block "Todos" .}}  
+      {{range .Todos}}
+      <div class="flex gap-2 justify-between items-center">
+        <p class="{{if .Completed}} opacity-50 line-through {{end}}">
+          {{ .Title }}
+        </p>
+
+        <div class="flex gap-4">
+          <button
+            class=""
+            hx-put="/todos/{{ .Id }}"
+            hx-target="#todos"
+            hx-swap="innerHTML"
+          >
+            {{ if .Completed }}
+              ✅
+            {{else}}
+              ⬜️
+            {{end}}
+          </button>
+  
+          <button
+            class=""
+            hx-delete="/todos/{{ .Id }}"
+            hx-target="#todos"
+            hx-swap="innerHTML"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+      {{end}}
+    {{end}}
+  </div>
+</body>
+</html>
